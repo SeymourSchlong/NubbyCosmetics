@@ -6,6 +6,44 @@
 // This houses all of the loaded custom skins.
 global.CustomSkins = [];
 
+
+function custom_skins_get_subfolders(directory) {
+	var _directories = [];
+	var _file_name = file_find_first(directory + "/*", fa_directory);
+
+	while (_file_name != "")
+	{
+		array_push(_directories, _file_name);
+
+		_file_name = file_find_next();
+	}
+
+	file_find_close();
+	return _directories;
+}
+
+function custom_skins_create_sprite(loc, frames) {
+	var _new_sprite = sprite_add(loc, frames, false, false, 0, 0);
+			
+	// re-set the origin point
+	var _xoff = sprite_get_width(_new_sprite) / 2;
+	var _yoff = sprite_get_width(_new_sprite) / 2;
+	sprite_set_offset(_new_sprite, _xoff, _yoff);
+	
+	return _new_sprite;
+}
+
+function custom_skins_read_json(loc) {
+	var _fileid = file_text_open_read(loc);
+	var _text = file_text_read_string(_fileid);
+	while (!file_text_eof(_fileid)) {
+		_text += file_text_readln(_fileid);
+	}
+	file_text_close(_fileid);
+	var _json_data = json_parse(_text);
+	return _json_data;
+}
+
 // Load custom skins here.
 // Used in `gml_Object_obj_GAME_Create_0`
 function custom_skins_initialize() {
@@ -29,23 +67,14 @@ function custom_skins_initialize() {
 	
 	*/
 	
-	var _base_dir = working_directory + "/Skins";
+	// THIS SECTION IS FOR THE USER "Skins" FOLDER.
+	var _base_dir = working_directory + "Skins";
 	
 	// if the skin folder exists...
 	if (directory_exists(_base_dir)) {
 		
 		// find subfolders
-		var _directories = [];
-		var _file_name = file_find_first(_base_dir + "/*", fa_directory);
-
-		while (_file_name != "")
-		{
-		    array_push(_directories, _file_name);
-
-		    _file_name = file_find_next();
-		}
-
-		file_find_close();
+		var _directories = custom_skins_get_subfolders(_base_dir);
 		
 		// iterate through each subfolder.
 		for (var _i = 0; _i < array_length(_directories); _i++) {
@@ -55,29 +84,11 @@ function custom_skins_initialize() {
 			if (!file_exists(_folder + "info.json") && !file_exists(_folder + "nubby.png") && !file_exists(_folder + "launcher.png")) continue;
 			
 			// read the json file
-			var _info_fileid = file_text_open_read(_folder + "info.json");
-			var _info_text = file_text_read_string(_info_fileid);
-			while (!file_text_eof(_info_fileid)) {
-				_info_text += file_text_readln(_info_fileid);
-			}
-			file_text_close(_info_fileid);
-			var _json_data = json_parse(_info_text);
+			var _json_data = custom_skins_read_json(_folder + "info.json");
 			
-			// load sprite
-			var _nubby_sprite = sprite_add(_folder + "nubby.png", 36, false, false, 0, 0);
-			
-			// re-set the origin point
-			var _nubby_xoff = sprite_get_width(_nubby_sprite) / 2;
-			var _nubby_yoff = sprite_get_width(_nubby_sprite) / 2;
-			sprite_set_offset(_nubby_sprite, _nubby_xoff, _nubby_yoff);
-			
-			// load sprite
-			var _launcher_sprite = sprite_add(_folder + "launcher.png", 20, false, false, 0, 0);
-			
-			// re-set the origin point
-			var _launcher_xoff = sprite_get_width(_launcher_sprite) / 2;
-			var _launcher_yoff = sprite_get_width(_launcher_sprite) / 2;
-			sprite_set_offset(_launcher_sprite, _launcher_xoff, _launcher_yoff);
+			// load sprites
+			var _nubby_sprite = custom_skins_create_sprite(_folder + "nubby.png", 36);
+			var _launcher_sprite = custom_skins_create_sprite(_folder + "launcher.png", 20);
 			
 			struct_set(_json_data, "nubby", _nubby_sprite);
 			struct_set(_json_data, "launcher", _launcher_sprite);
@@ -85,6 +96,58 @@ function custom_skins_initialize() {
 			array_push(obj_Game.U_Cosmo_NubbySkin, 1);
 			
 			array_push(global.CustomSkins, _json_data);
+		}
+	}
+	
+	
+	
+	// THIS SECTION IS FOR THE MOD "skins" FOLDER.
+	var _mods_dir = working_directory + string_replace_all(global.g3man_7.profile_path, "/", "\\");
+	
+	// if the skin folder exists...
+	if (directory_exists(_mods_dir)) {
+		// find subfolders
+		var _mod_directories = [];
+		var _file_name = file_find_first(_mods_dir + "\\*", fa_directory);
+
+		while (_file_name != "")
+		{
+			if (directory_exists(_mods_dir + "\\" + _file_name + "\\skins")) {
+				if (array_get_index(global.g3man_7.disabled_mods, _file_name) == -1) {
+					array_push(_mod_directories, _file_name);
+				}
+			}
+
+		    _file_name = file_find_next();
+		}
+
+		file_find_close();
+		
+		// iterate through each subfolder.
+		for (var _i = 0; _i < array_length(_mod_directories); _i++) {
+			// here you'll have to do the folder search again to get all the skins from that mod.
+			var _directories = custom_skins_get_subfolders(_mods_dir + "\\" + _mod_directories[_i] + "\\skins\\");
+			
+			for (var _j = 0; _j < array_length(_directories); _j++) {
+				var _folder = _mods_dir + "\\" + _mod_directories[_i] + "\\skins\\" + _directories[_j] + "\\";
+			
+				// if info.json and nubby.png and launcher.png exist...
+				if (!file_exists(_folder + "info.json") && !file_exists(_folder + "nubby.png") && !file_exists(_folder + "launcher.png")) continue;
+			
+				// read the json file
+				var _json_data = custom_skins_read_json(_folder + "info.json");
+			
+				// load sprites
+				var _nubby_sprite = custom_skins_create_sprite(_folder + "nubby.png", 36);
+				var _launcher_sprite = custom_skins_create_sprite(_folder + "launcher.png", 20);
+			
+				struct_set(_json_data, "nubby", _nubby_sprite);
+				struct_set(_json_data, "launcher", _launcher_sprite);
+			
+				array_push(obj_Game.U_Cosmo_NubbySkin, 1);
+			
+				array_push(global.CustomSkins, _json_data);
+			}
 		}
 	}
 }

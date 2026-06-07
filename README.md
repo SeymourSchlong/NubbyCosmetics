@@ -19,6 +19,10 @@ Nubby's Number Factory
 ```
 When you launch the game, the Warehouse should have those new custom skins added to the end of its list.
 
+## For Mod Developers
+To include a custom skin with the download of your mod, simply make a folder named `skins` in your mod directory (the same place that `patches` or `trans` exists).  
+Every skin that's inside there will be loaded like normal.
+
 ## How to Make Custom Nubby Skins
 1. Download the template skin here: 
 2. Rename the folder to whatever you want yours to be.

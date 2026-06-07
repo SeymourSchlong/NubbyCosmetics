@@ -13,5 +13,8 @@
             "path" : "patches"
         }
     ],
-    "datafile_path" : "mod_data.win"
+    "datafile_path" : "mod_data.win",
+    "imports" : [
+        "g3man_7"
+    ]
 }

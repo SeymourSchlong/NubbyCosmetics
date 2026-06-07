@@ -1,0 +1,17 @@
+{
+    "mod_id" : "custom_cosmetics",
+    "display_name" : "Custom Cosmetics",
+    "description" : "Enables the addition of custom Nubby skins.",
+    "credits" : ["seymour"],
+    "version" : "1.0.0",
+    "target_g3man_version" : 7,
+    "depends" : [],
+    "breaks" : [],
+    "patches" : [
+        {
+            "type" : "gmlp",
+            "path" : "patches"
+        }
+    ],
+    "datafile_path" : "mod_data.win"
+}

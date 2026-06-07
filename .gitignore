@@ -57,3 +57,11 @@ Temporary Items
 # GameMaker temporary files
 *.resource_order
 *.old
+
+
+g3man/.frida
+g3man/out
+g3man/out.zip
+g3man/frida-user-config.jsonc
+g3man/__pycache__
+vanilla.win

@@ -1,0 +1,7 @@
+meta:
+targets = 'gml_Object_obj_WarehouseMGMT_Create_0'
+critical = true
+
+patch:
+move_to_end()
+write('custom_skins_handle_addition()')

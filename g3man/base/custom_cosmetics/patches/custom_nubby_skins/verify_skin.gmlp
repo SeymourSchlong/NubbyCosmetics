@@ -1,0 +1,8 @@
+meta:
+targets = 'gml_Object_obj_Loader_Alarm_0'
+critical = true
+
+patch:
+find_line_with('case "Progression3":')
+find_line_with('break')
+write_before('custom_skins_verifier()')

@@ -4,5 +4,4 @@ critical = true
 
 patch:
 find_line_with('default:')
-find_line_with('return -1')
-write_replace('return custom_skins_handle_sprites(arg0, arg1);')
+write('return custom_skins_handle_sprites(arg0, arg1);')
